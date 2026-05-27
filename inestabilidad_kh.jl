@@ -1,14 +1,28 @@
 # =============================================================================
 # Simulación de Inestabilidad de Kelvin-Helmholtz
 # Método pseudo-espectral 2D con vorticidad
+<<<<<<< HEAD
 # Por Pedro Damian Meneses Orozco
 # Facultad de Ciencias 
+=======
+>>>>>>> 31f6666 (agregué los avances del proyecto)
 # =============================================================================
 
 using FFTW
 using LinearAlgebra
 using Printf
+<<<<<<< HEAD
 using Plots
+=======
+
+# Intentar cargar Plots, si no está instalado dar instrucciones
+try
+    using Plots
+catch
+    println("Instala Plots.jl con: using Pkg; Pkg.add(\"Plots\")")
+    exit(1)
+end
+>>>>>>> 31f6666 (agregué los avances del proyecto)
 
 # =============================================================================
 # PARÁMETROS
@@ -18,11 +32,16 @@ const Nx  = 256          # Puntos en x
 const Ny  = 256          # Puntos en y
 const Lx  = 2π          # Longitud del dominio en x (periódico)
 const Ly  = 2π          # Longitud del dominio en y (periódico)
+<<<<<<< HEAD
 const ν   = 1e-4        # Viscosidad cinemática (Re ~ 10^4)
+=======
+const ν   = 1e-4         # Viscosidad cinemática (Re ~ 10^4)
+>>>>>>> 31f6666 (agregué los avances del proyecto)
 const U0  = 1.0          # Velocidad de cizallamiento
 const δ   = 0.2          # Espesor de la capa de mezcla
 const ε   = 0.01         # Amplitud de la perturbación inicial
 const dt  = 5e-4         # Paso temporal
+<<<<<<< HEAD
 const T   = 20.0         # Tiempo total de simulación
 const Nt  = Int(T / dt)  # Número de pasos
 const n_save = 200       # Guardar cada n_save pasos
@@ -30,6 +49,11 @@ const ouput_dir = "resultados/delta$(δ)_eps$(ε)_nu$(ν)"
 
 # Crear directorio
 mkpath(ouput_dir)
+=======
+const T   = 25.0         # Tiempo total de simulación
+const Nt  = Int(T / dt)  # Número de pasos
+const n_save = 200       # Guardar cada n_save pasos
+>>>>>>> 31f6666 (agregué los avances del proyecto)
 
 # =============================================================================
 # GRILLA Y NÚMEROS DE ONDA
@@ -175,8 +199,11 @@ function main()
     println("  Grid:        $(Nx) × $(Ny)")
     println("  Re ~ $(Int(round(U0*Ly/ν)))")
     println("  dt = $dt,  T = $T,  pasos = $Nt")
+<<<<<<< HEAD
     println("  Espesor ϵ = $(ε)")
     println("  Aplitud de la perturbación: δ = $(δ)")
+=======
+>>>>>>> 31f6666 (agregué los avances del proyecto)
     println("="^60)
 
     # Condición inicial
@@ -196,11 +223,14 @@ function main()
     # Colección de frames para animación
     frames = []
 
+<<<<<<< HEAD
     # Guardar archivo .dat con los datos de energía y enstrofia
     data_file = open(joinpath(ouput_dir, "diagnosticos.dat"), "w")
     println(data_file, "# t     E(t)    Z(t)")
     println(data_file, "# nu = $(ν)  delta = $(δ)  eps = $(ε)  U0 = $(U0)")
 
+=======
+>>>>>>> 31f6666 (agregué los avances del proyecto)
     println("\nIniciando simulación...\n")
     t_inicio = time()
 
@@ -224,16 +254,22 @@ function main()
             # Frame de vorticidad
             push!(frames, copy(ω))
 
+<<<<<<< HEAD
             # Escribir en el .dat
             @printf(data_file, "%.6f  %.10e  %.10e\n", t, E, Z)
 
+=======
+>>>>>>> 31f6666 (agregué los avances del proyecto)
             elapsed = time() - t_inicio
             @printf("  t = %6.2f  |  E = %.4e  |  Z = %.4e  |  %.1f s\n", t, E, Z, elapsed)
         end
     end
+<<<<<<< HEAD
     #Cerrar .dat
     close(data_file)
 
+=======
+>>>>>>> 31f6666 (agregué los avances del proyecto)
 
     println("\nSimulación completada. Generando visualizaciones...")
 
@@ -252,8 +288,13 @@ function main()
             colorbar_title="ω"
         )
     end
+<<<<<<< HEAD
     gif(anim, joinpath(ouput_dir,"kh_delta$(δ)_eps$(ε).gif"), fps=10)
     println("  → kh_delta$(δ)_eps$(ε).gif guardado")
+=======
+    gif(anim, "kelvin_helmholtz.gif", fps=10)
+    println("  → kelvin_helmholtz.gif guardado")
+>>>>>>> 31f6666 (agregué los avances del proyecto)
 
     # --- Energía cinética en el tiempo ---
     p1 = plot(tiempos, energias,
@@ -262,8 +303,13 @@ function main()
         lw=2, color=:steelblue, legend=false,
         yscale=:log10, size=(700, 400)
     )
+<<<<<<< HEAD
     savefig(p1, joinpath(ouput_dir,"en_delta$(δ)_eps$(ε).png"))
     println("  → en_delta$(δ)_eps$(ε).png guardado")
+=======
+    savefig(p1, "energia.png")
+    println("  → energia.png guardado")
+>>>>>>> 31f6666 (agregué los avances del proyecto)
 
     # --- Enstrofía en el tiempo ---
     p2 = plot(tiempos, enstrofias,
@@ -272,8 +318,13 @@ function main()
         lw=2, color=:crimson, legend=false,
         size=(700, 400)
     )
+<<<<<<< HEAD
     savefig(p2, joinpath(ouput_dir,"ens_delta$(δ)_eps$(ε).png"))
     println("  → ens_delta$(δ)_eps$(ε).png guardado")
+=======
+    savefig(p2, "enstrofia.png")
+    println("  → enstrofia.png guardado")
+>>>>>>> 31f6666 (agregué los avances del proyecto)
 
     # --- Espectro de energía final ---
     ω_final = frames[end]
@@ -307,6 +358,7 @@ function main()
     E_ref = E_spectrum[valid][5] .* (k_ref ./ k_centers[valid][5]).^(-3)
     plot!(p3, k_ref, E_ref, lw=1.5, ls=:dash, color=:gray, label="k⁻³")
 
+<<<<<<< HEAD
     savefig(p3, joinpath(ouput_dir,"espectro.png"))
     println("  → espectro.png guardado")
 
@@ -314,6 +366,15 @@ function main()
     println("  kh_delta$(δ)_eps$(ε).gif  — animación del campo de vorticidad")
     println("  en_delta$(δ)_eps$(ε).png           — energía cinética vs tiempo")
     println("  ens_delta$(δ)_eps$(ε).png         — enstrofía vs tiempo")
+=======
+    savefig(p3, "espectro.png")
+    println("  → espectro.png guardado")
+
+    println("\n¡Listo! Archivos generados:")
+    println("  kelvin_helmholtz.gif  — animación del campo de vorticidad")
+    println("  energia.png           — energía cinética vs tiempo")
+    println("  enstrofia.png         — enstrofía vs tiempo")
+>>>>>>> 31f6666 (agregué los avances del proyecto)
     println("  espectro.png          — espectro de energía E(k)")
 end
 
