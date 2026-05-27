@@ -9,6 +9,8 @@
 # =============================================================================
 
 using FFTW
+using Pkg
+Pkg.add(["FFTW","Plots"])
 using LinearAlgebra
 using Printf
 <<<<<<< HEAD
