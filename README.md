@@ -116,10 +116,10 @@ El código permite analizar:
 
 ## Referencias
 
-1. Canuto, C., Hussaini, M. Y., Quarteroni, A., & Zang, T. A. *Spectral Methods in Fluid Dynamics*.
+1. Canuto. et. al (1988). *Spectral Methods in Fluid Dynamics*. Springer.
 2. Orszag, S. A. (1971). *Elimination of aliasing in finite-difference schemes*.
-3. Drazin, P. G., & Reid, W. H. *Hydrodynamic Stability*.
-4. McNally, C. P., Lyra, W., & Passy, J. C. (2012). *A Well-Posed Kelvin–Helmholtz Instability Test and Comparison*.
+3. Drazin, P. G., & Reid, W. H. (2004) *Hydrodynamic Stability*. (2nd ed.). Cambridge University Press.
+4. Orszag, S.A. (1972). *Comparison of pseudospectral and spectral approximations*. Stud. Appl. Math.
 
 ---
 
