@@ -18,15 +18,15 @@ const Nx  = 256          # Puntos en x
 const Ny  = 256          # Puntos en y
 const Lx  = 2π          # Longitud del dominio en x (periódico)
 const Ly  = 2π          # Longitud del dominio en y (periódico)
-const ν   = 1e-5        # Viscosidad cinemática (Re ~ 10^4)
+const ν   = 1e-4        # Viscosidad cinemática (Re ~ 10^4)
 const U0  = 1.0          # Velocidad de cizallamiento
-const δ   = 0.2          # Espesor de la capa de mezcla
+const δ   = 0.1          # Espesor de la capa de mezcla
 const ε   = 0.01         # Amplitud de la perturbación inicial
 const dt  = 5e-4         # Paso temporal
 const T   = 20.0         # Tiempo total de simulación
 const Nt  = Int(T / dt)  # Número de pasos
 const n_save = 200       # Guardar cada n_save pasos
-const ouput_dir = "resultados/delta$(δ)_eps$(ε)_nu$(ν)"
+const ouput_dir = "resultados/delta$(δ)_eps$(ε)_nu$(ν)_t$(T)"
 
 # Crear directorio
 mkpath(ouput_dir)
@@ -38,7 +38,7 @@ mkpath(ouput_dir)
 x = [Lx * i / Nx for i in 0:Nx-1]
 y = [Ly * j / Ny - Ly/2 for j in 0:Ny-1]  # centrado en 0
 
-# Números de onda (convención FFTW)
+# Números de onda 
 kx_vec = fftfreq(Nx, Nx / Lx) .* 2π
 ky_vec = fftfreq(Ny, Ny / Ly) .* 2π
 
@@ -84,7 +84,7 @@ end
 
 # =============================================================================
 # DERIVADA TEMPORAL (lado derecho de ∂ω/∂t)
-# Ecuación de vorticidad: ∂ω/∂t + u·∇ω = ν∇²ω
+# Ecuación de vorticidad: ∂ω/∂t = - u·∇ω + ν∇²ω
 # En espectral: û = ∂ψ/∂y, v̂ = -∂ψ/∂x, ψ̂ = -ω̂/K²
 # =============================================================================
 
@@ -154,10 +154,10 @@ end
 # DIAGNÓSTICOS
 # =============================================================================
 
-function energia_cinetica(ω, K2_safe, plan_fwd)
+function energia_cinetica(ω, K2, K2_safe, plan_fwd)
     ω_hat = plan_fwd * ω
     ψ_hat = -ω_hat ./ K2_safe
-    return 0.5 * sum(abs.(ψ_hat).^2) / length(ω)^2
+    return 0.5 * sum(K2 .*abs.(ψ_hat).^2) / length(ω)^2
 end
 
 function enstrofia(ω)
@@ -215,7 +215,7 @@ function main()
 
         if n % n_save == 0
             t = n * dt
-            E = energia_cinetica(ω, K2_safe, plan_fwd)
+            E = energia_cinetica(ω, K2, K2_safe, plan_fwd)
             Z = enstrofia(ω)
             push!(tiempos, t)
             push!(energias, E)
@@ -252,8 +252,8 @@ function main()
             colorbar_title="ω"
         )
     end
-    gif(anim, joinpath(ouput_dir,"kh_delta$(δ)_eps$(ε).gif"), fps=10)
-    println("  → kh_delta$(δ)_eps$(ε).gif guardado")
+    gif(anim, joinpath(ouput_dir,"kh_delta$(δ)_eps$(ε)_nu$(ν).gif"), fps=10)
+    println("  → kh_delta$(δ)_eps$(ε)_nu$(ν).gif guardado")
 
     # --- Energía cinética en el tiempo ---
     p1 = plot(tiempos, energias,
@@ -262,8 +262,8 @@ function main()
         lw=2, color=:steelblue, legend=false,
         yscale=:log10, size=(700, 400)
     )
-    savefig(p1, joinpath(ouput_dir,"en_delta$(δ)_eps$(ε).png"))
-    println("  → en_delta$(δ)_eps$(ε).png guardado")
+    savefig(p1, joinpath(ouput_dir,"en_delta$(δ)_eps$(ε)_nu$(ν).png"))
+    println("  → en_delta$(δ)_eps$(ε)_nu$(ν).png guardado")
 
     # --- Enstrofía en el tiempo ---
     p2 = plot(tiempos, enstrofias,
@@ -272,8 +272,8 @@ function main()
         lw=2, color=:crimson, legend=false,
         size=(700, 400)
     )
-    savefig(p2, joinpath(ouput_dir,"ens_delta$(δ)_eps$(ε).png"))
-    println("  → ens_delta$(δ)_eps$(ε).png guardado")
+    savefig(p2, joinpath(ouput_dir,"ens_delta$(δ)_eps$(ε)_nu$(ν).png"))
+    println("  → ens_delta$(δ)_eps$(ε)_nu$(ν).png guardado")
 
     # --- Espectro de energía final ---
     ω_final = frames[end]
